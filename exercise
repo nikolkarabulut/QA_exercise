@@ -1,0 +1,55 @@
+from selenium import webdriver
+from selenium.webdriver.common.keys import Keys
+import time
+
+
+driver = webdriver.Firefox()
+driver.maximize_window()
+
+# opening www.google.com.tr
+driver.get("https://www.google.com.tr")
+
+# verifying it's Google 
+assert "Google" in driver.title
+
+# searching for "Hipo Labs"
+search = driver.find_element_by_name("q")
+search.send_keys("Hipo Labs")
+time.sleep(1)
+search.send_keys(Keys.ENTER)
+
+# waiting before searching for an element
+driver.implicitly_wait(10)
+
+# verifying "hipolabs.com" is listed
+assert "hipolabs.com" in driver.find_element_by_css_selector("div.g:nth-child(1) > div:nth-child(2) > div:nth-child(1) > a:nth-child(1) > div:nth-child(3) > cite:nth-child(1)").text
+
+# opening the website                        
+driver.get("https://www.hipolabs.com")
+
+# waiting before searching for an element
+driver.implicitly_wait(10)
+
+# opening Team menu
+team_page = driver.find_element_by_partial_link_text("TEAM").get_attribute("href")
+driver.get(team_page)
+
+# waiting before searching for an element
+driver.implicitly_wait(10)
+
+# verifying page has "APPLY NOW" text - returns 'Not found' 
+l = driver.find_elements_by_xpath("//*[contains(text(), 'APPLY NOW')]")
+if len(l) > 0:
+    print("Found")
+else:
+    print("Not Found")
+
+# taking a screenshot
+driver.save_screenshot(r"C:\Users\lenovo\Desktop\screenshots\test1.png") 
+
+# Alternatively, after clicking on the "APPLY FOR JOBS" button on the Team page, there is an "APPLY NOW" text. 
+driver.find_element_by_id("pageTeamApplynowButton").click()
+if driver.find_element_by_xpath("/html/body/div[2]/div/div/section/div/a/button").text == "APPLY NOW":
+    print("Found")
+else:
+    print("Not Found")
